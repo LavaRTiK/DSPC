@@ -2,7 +2,7 @@
 
 namespace DSPC.ConsumerProducer
 {
-    public class Logger : IAsyncDisposable
+    public class Logger : IDisposable
     {
         private StreamWriter _output;
 
@@ -35,10 +35,10 @@ namespace DSPC.ConsumerProducer
             return $"logfile_{DateTime.Now:ddMM_HHmmss_fff}.log";
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            await _output.FlushAsync();
-            await _output.DisposeAsync();
+            _output.Flush();
+            _output.Dispose();
         }
     }
 }

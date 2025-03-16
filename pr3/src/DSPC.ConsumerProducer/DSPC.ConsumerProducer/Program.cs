@@ -24,6 +24,8 @@
             b.StopProduce();
             c.StopProduce();
 
+            logger.Dispose();
+            
             Console.WriteLine("Done!");
         }
     }
