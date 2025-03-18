@@ -5,6 +5,7 @@
         static void Main()
         {
             var logger = new Logger();
+            logger.Start();
 
             Console.WriteLine($"Log file created: {Path.GetFullPath(logger.Filename)}");
 
@@ -23,9 +24,9 @@
             a.StopProduce();
             b.StopProduce();
             c.StopProduce();
-
+            logger.Stop();
             logger.Dispose();
-            
+
             Console.WriteLine("Done!");
         }
     }
