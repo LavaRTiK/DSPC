@@ -32,13 +32,6 @@ namespace DSPC.ConsumerProducer
         {
             ObjLog log = new ObjLog(logLevel, message);
             _writer.TryWrite(log);
-            try
-            {
-                semaphore.Release();
-            }
-            catch
-            {
-            }
         }
         private string FromatMessage(DateTime time, string logLevel, string message)
         {
@@ -58,22 +51,22 @@ namespace DSPC.ConsumerProducer
         }
         public void Start()
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                while (!_cancellationToken.IsCancellationRequested)
+                try
                 {
-                    _reader.TryRead(out var objLog);
-                    if (objLog != null)
+                    await foreach(var item in _reader.ReadAllAsync(_cancellationToken.Token))
                     {
-                        var logMessage = FromatMessage(DateTime.Now, objLog.LogLevel, objLog.Message);
-
+                        var logMessage = FromatMessage(DateTime.Now, item.LogLevel, item.Message);
                         _output.WriteLine(logMessage);
                         _output.Flush();
+
                     }
-                    else
-                    {
-                        semaphore.WaitOne();
-                    }
+                }
+                catch (OperationCanceledException)
+                {
+
+                    Console.WriteLine("stop Loading"); ;
                 }
                 Console.WriteLine("end");
             });
