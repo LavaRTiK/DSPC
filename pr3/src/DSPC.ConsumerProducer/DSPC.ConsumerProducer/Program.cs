@@ -4,7 +4,7 @@
     {
         static void Main()
         {
-            var logger = new Logger();
+            var logger = new LoggerChannel();
             logger.Start();
 
             Console.WriteLine($"Log file created: {Path.GetFullPath(logger.Filename)}");
@@ -33,12 +33,12 @@
 
     public class Producer
     {
-        private readonly Logger _logger;
+        private readonly LoggerChannel _logger;
         private readonly string _name;
         private readonly Random _random;
         private bool _cancelled;
 
-        public Producer(Logger logger, string name)
+        public Producer(LoggerChannel logger, string name)
         {
             _random = new Random();
 
