@@ -8,6 +8,7 @@ namespace DSPC.ConsumerProducer
         private StreamWriter _output;
         private ConcurrentQueue<ObjLog> _queue;
         private CancellationTokenSource _cancellationToken;
+        private Semaphore semaphore;
         public string Filename { get; private set; }
 
         public Logger()
@@ -15,7 +16,7 @@ namespace DSPC.ConsumerProducer
             Filename = GenerateFileName();
 
             var logFile = new FileStream(Filename, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
-
+            semaphore = new Semaphore(1, 1);
             _output = new StreamWriter(logFile, Encoding.UTF8);
             _cancellationToken = new CancellationTokenSource();
             _queue = new ConcurrentQueue<ObjLog>();
@@ -25,6 +26,7 @@ namespace DSPC.ConsumerProducer
         {
             ObjLog log = new ObjLog(logLevel, message);
             _queue.Enqueue(log);
+            semaphore.Release();
         }
         private string FromatMessage(DateTime time, string logLevel, string message)
         {
@@ -54,6 +56,10 @@ namespace DSPC.ConsumerProducer
 
                         _output.WriteLine(logMessage);
                         _output.Flush();
+                    }
+                    else
+                    {
+                        semaphore.WaitOne();
                     }
                 }
                 Console.WriteLine("end");

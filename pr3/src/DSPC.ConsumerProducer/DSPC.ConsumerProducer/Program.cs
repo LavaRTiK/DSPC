@@ -21,9 +21,9 @@
 
             Console.ReadLine();
 
-            a.StopProduce();
-            b.StopProduce();
-            c.StopProduce();
+            //a.StopProduce();
+            //b.StopProduce();
+            //c.StopProduce();
             logger.Stop();
             logger.Dispose();
 
